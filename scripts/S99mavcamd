@@ -1,0 +1,58 @@
+#!/bin/sh
+#
+# Start/stop mavcamd daemon for MAVLink camera protocol mapping
+#
+
+DAEMON="mavcamd"
+PIDFILE="/var/run/$DAEMON.pid"
+BINARY="/usr/sbin/mavcamd"
+
+# Ensure the core daemon executable exists before continuing
+[ -x "$BINARY" ] || exit 0
+
+# Clean runtime options without redirect symbols inside arguments scope
+DAEMON_ARGS="-a 127.0.0.1:14553 -c /etc/mavcam.json -t"
+
+start() {
+	printf "Starting $DAEMON: "
+	# Fix: Removed internal -b flag and used shell ampersand '&' for background processing.
+	# The -m flag guarantees that start-stop-daemon writes the precise PID of the executed binary.
+	start-stop-daemon -S -q -m -p "$PIDFILE" -x "$BINARY" -- $DAEMON_ARGS > /dev/null 2>&1 &
+	[ $? -eq 0 ] && echo "OK" || echo "FAIL"
+}
+
+stop() {
+	printf "Stopping $DAEMON: "
+	# Terminate active background running instance tracked via kernel PID interface
+	start-stop-daemon -K -q -p "$PIDFILE" -x "$BINARY"
+	if [ $? -eq 0 ]; then
+		echo "OK"
+		rm -f "$PIDFILE"
+	else
+		echo "FAIL"
+	fi
+}
+
+restart() {
+	stop
+	sleep 1
+	start
+}
+
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart|reload)
+        restart
+        ;;
+  *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+        ;;
+esac
+
+exit 0

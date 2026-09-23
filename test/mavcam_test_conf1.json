@@ -1,0 +1,69 @@
+{
+   "camera_information": {
+    "component_id": 100,
+    "vendor_name": "Dahua",
+    "model_name": "DH-SD2A500NB",
+    "firmware_version": 1,
+    "focal_length": 4,
+    "sensor_size_h": 5.18,
+    "sensor_size_v": 3.84,
+    "resolution_h": 2560,
+    "resolution_v": 1920,
+    "lens_id": 0,
+    "flags": 263,
+    "cam_definition_version": 0,
+    "cam_definition_uri": "",
+    "gimbal_device_id": 0,
+    "camera_device_id": 0
+  },
+  "video_streams": [
+    {
+      "stream_id": 1,
+      "type": 0,
+      "flags": 1,
+      "framerate": 25.0,
+      "resolution_h": 1920,
+      "resolution_v": 1080,
+      "bitrate": 2048000,
+      "rotation": 0,
+      "hfov": 80,
+      "encoding": 2,
+      "camera_device_id": 0,
+      "name": "main_1080p_h265",
+      "uri": "rtsp://admin:admin12345@192.168.1.108:554/cam/realmonitor?channel=1&subtype=0"
+    },
+    {
+      "stream_id": 2,
+      "type": 0,
+      "flags": 1,
+      "framerate": 25.0,
+      "resolution_h": 704,
+      "resolution_v": 576,
+      "bitrate": 512000,
+      "rotation": 0,
+      "hfov": 80,
+      "encoding": 2,
+      "camera_device_id": 0,
+      "name": "sub_d1_h265",
+      "uri": "rtsp://admin:admin12345@192.168.1.108:554/cam/realmonitor?channel=1&subtype=1"
+    }
+  ],
+  "storages": [
+    {
+      "storage_id": 1,
+      "type": 7,
+      "name": "HDD",
+      "dcim": "/home/mars2860/mavcamd/img",
+      "storage_usage": 15,
+      "read_speed": 240,
+      "write_speed": 200
+    }
+  ],
+  "rest_api": {
+    "base_url": "http://admin:admin12345@192.168.1.108/cgi-bin",
+    "video_start": "/configManager.cgi?action=setConfig&RecordMode[0].Mode=1",
+    "video_stop": "/configManager.cgi?action=setConfig&RecordMode[0].Mode=2",
+    "video_status": "/configManager.cgi?action=getConfig&name=RecordMode",
+    "photo_capture": "/snapshot.cgi"
+  }
+}

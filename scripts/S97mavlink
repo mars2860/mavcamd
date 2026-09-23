@@ -1,0 +1,57 @@
+#!/bin/sh
+#
+# Start/stop mavlink-routerd for OpenIPC telemetry routing
+#
+
+DAEMON="/usr/sbin/mavlink-routerd"
+CONFIG="/etc/mavlink.conf"
+
+# Stop executing if the binary is missing on the filesystem
+[ -x "$DAEMON" ] || exit 0
+
+start() {
+    if [ ! -f "$CONFIG" ]; then
+        echo "Error: Configuration file $CONFIG missing!"
+        exit 1
+    fi
+    printf "Starting mavlink-routerd: "
+    
+    # Run daemon in background
+    "$DAEMON" -c "$CONFIG" > /dev/null 2>&1 &
+
+    if [ $? -eq 0 ]; then
+        echo "OK"
+    else
+        echo "FAIL"
+    fi
+}
+
+stop() {
+    printf "Stopping mavlink-routerd: "
+    killall -q mavlink-routerd
+    if [ $? -eq 0 ]; then
+        echo "OK"
+    else
+        echo "FAIL (NOT RUNNING)"
+    fi
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart|reload)
+        stop
+        sleep 1
+        start
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+        ;;
+esac
+
+exit 0

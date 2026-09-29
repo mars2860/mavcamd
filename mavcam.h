@@ -189,6 +189,14 @@ bool mavcam_cb_reset_camera_settings(uint8_t reset_mode);
  */
 bool mavcam_cb_storage_format(uint8_t storage_id);
 
+/**
+ * @brief Request the hardware/platform layer to synchronize the system time.
+ * @details This function is invoked when a MAVLink SYSTEM_TIME message is received 
+ *          from the ground control station or flight controller to sync clocks.
+ * @param[in] time_unix_usec Synchronized UTC timestamp (time since UNIX epoch) in microseconds.
+ */
+void mavcam_cb_set_system_time(uint64_t time_unix_usec);
+
 /* ========================================================================== */
 /*                 SECTION 2: CORE LIBRARY API PROTOTYPES                     */
 /* ========================================================================== */

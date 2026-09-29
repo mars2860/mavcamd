@@ -24,6 +24,9 @@
 /// Absolute filesystem path to the Waybeam video encoder configuration file.
 #define WAYBEAM_CONFIG_PATH                 "/etc/waybeam.json"
 
+// Time difference threshold in milliseconds to trigger system clock adjustment.
+#define SYSTEM_TIME_SYNC_THRESHOLD_MS       3000
+
 #define CURRENT_STORAGE_ID      1
 
 typedef enum {

@@ -1437,3 +1437,57 @@ bool mavcam_cb_storage_format(uint8_t storage_id) {
     LOG_INFO("Storage ID %d format complete. Content erased, counters reset.", storage_id);
     return true;
 }
+
+static bool time_not_need_correction_showed = false;
+
+void mavcam_cb_set_system_time(uint64_t time_unix_usec) {
+    // Prevent processing with empty or invalid payloads
+    if (time_unix_usec == 0) {
+        return;
+    }
+
+    // Get current system time using realtime clock
+    struct timespec current_ts;
+    if (clock_gettime(CLOCK_REALTIME, &current_ts) != 0) {
+        LOG_ERROR("Failed to read current system time for validation: %s", strerror(errno));
+        return;
+    }
+
+    // Convert current system time to microseconds
+    uint64_t current_unix_usec = ((uint64_t)current_ts.tv_sec * 1000000ULL) + 
+                                 ((uint64_t)current_ts.tv_nsec / 1000ULL);
+
+    // Calculate absolute delta between current time and incoming time
+    uint64_t delta_usec = 0;
+
+    if (time_unix_usec < current_unix_usec ) {
+        delta_usec = current_unix_usec - time_unix_usec;
+    } else {
+        delta_usec = time_unix_usec - current_unix_usec;
+    }
+
+    uint64_t threshold_usec = (uint64_t)SYSTEM_TIME_SYNC_THRESHOLD_MS * 1000ULL;
+
+    // Skip clock adjustment if time discrepancy is within the threshold
+    if (delta_usec < threshold_usec) {
+        if(!time_not_need_correction_showed) {
+            LOG_INFO("The correction of system time is not needed, delta_usec=%i",(int)delta_usec);
+            time_not_need_correction_showed = true;
+        }
+        return;
+    }
+
+    struct timespec target_ts;
+    // Extract seconds and remaining nanoseconds from microseconds input
+    target_ts.tv_sec = (time_t)(time_unix_usec / 1000000ULL);
+    target_ts.tv_nsec = (long)((time_unix_usec % 1000000ULL) * 1000ULL);
+
+    // Apply the synchronized timestamp to the Linux system clock
+    if (clock_settime(CLOCK_REALTIME, &target_ts) == 0) {
+        LOG_INFO("System time synchronized via MAVLink! Current UTC: %s", timenow());
+        time_not_need_correction_showed = false;
+    } else {
+        // Track permission errors if the daemon lacks appropriate root privileges
+        LOG_ERROR("Failed to set system time (errno: %d, %s). Ensure root access.", errno, strerror(errno));
+    }
+}

@@ -1093,6 +1093,18 @@ static void on_msg_gimbal_device_attitude_status(mavlink_message_t *rx_msg) {
     }
 }
 
+static void on_msg_system_time(mavlink_message_t *rx_msg) {
+    mavlink_system_time_t sys_time;
+    mavlink_msg_system_time_decode(rx_msg, &sys_time);
+    
+    // Pass the extracted UTC time in microseconds to the hardware layer callback
+    //LOG_DEBUG("Received SYSTEM_TIME from sysid %d. Unix time us: %lui", rx_msg->sysid, sys_time.time_unix_usec);
+    
+    if (sys_time.time_unix_usec > 0) {
+        mavcam_cb_set_system_time(sys_time.time_unix_usec);
+    }
+}
+
 void mavcam_update(const uint8_t *data, size_t data_size, uint32_t boot_ms, uint64_t utc_us) {
     mavlink_status_t status;
     mavlink_message_t rx_msg;
@@ -1109,6 +1121,9 @@ void mavcam_update(const uint8_t *data, size_t data_size, uint32_t boot_ms, uint
                     mavlink_command_long_t cmd;
                     mavlink_msg_command_long_decode(&rx_msg, &cmd);
                     process_command_long(rx_msg.sysid, rx_msg.compid, &cmd);
+                    break;
+                case MAVLINK_MSG_ID_SYSTEM_TIME:
+                    on_msg_system_time(&rx_msg);
                     break;
             }
 

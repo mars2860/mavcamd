@@ -1,0 +1,68 @@
+{
+  "camera_information": {
+    "component_id": 100,
+    "vendor_name": "Runcam",
+    "model_name": "Wifilink2",
+    "firmware_version": 1,
+    "focal_length": 4,
+    "sensor_size_h": 5.6028,
+    "sensor_size_v": 3.1784,
+    "resolution_h": 3864,
+    "resolution_v": 2192,
+    "lens_id": 0,
+    "flags": 263,
+    "cam_definition_version": 0,
+    "cam_definition_uri": "",
+    "gimbal_device_id": 1,
+    "camera_device_id": 0
+  },
+  "storages": [
+    {
+      "storage_id": 1,
+      "type": 3,
+      "name": "SDCard",
+      "dcim": "/mnt/mmcblk0p1/DCIM3",
+      "storage_usage": 15,
+      "read_speed": 140,
+      "write_speed": 100
+    }
+  ],
+  "video_streams": [
+    {
+      "stream_id": 1,
+      "type": 0,
+      "flags": 1,
+      "framerate": 60.0,
+      "resolution_h": 1920,
+      "resolution_v": 1080,
+      "bitrate": 12000000,
+      "rotation": 0,
+      "hfov": 80,
+      "encoding": 1,
+      "camera_device_id": 0,
+      "name": "main_1080p_h264",
+      "uri": "rtsp://root:123456@192.168.0.1/stream=0"
+    },
+    {
+      "stream_id": 2,
+      "type": 0,
+      "flags": 1,
+      "framerate": 30.0,
+      "resolution_h": 1280,
+      "resolution_v": 720,
+      "bitrate": 4000000,
+      "rotation": 0,
+      "hfov": 80,
+      "encoding": 1,
+      "camera_device_id": 0,
+      "name": "sub_720p_h264",
+      "uri": "rtsp://root:123456@192.168.0.1/stream=1"
+    }
+  ],
+  "rest_api": {
+    "base_url": "http://localhost",
+    "video_start": "/api/v1/set?records.enabled=true",
+    "video_stop": "/api/v1/set?records.enabled=false",
+    "photo_capture": "/image.jpg"
+  }
+}
